@@ -6,7 +6,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const ALLOWED_ORIGIN = "https://cs571-f25.github.io/p72"; // GitHub Pages domain
+const ALLOWED_ORIGIN = "https://cs571-f25.github.io"; // GitHub Pages domain
 
 export async function GET(req: NextRequest) {
   const origin = req.headers.get("origin");
