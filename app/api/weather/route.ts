@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     `https://api.tomorrow.io/v4/weather/realtime?location=${loc}&apikey=${process.env.TOMORROW_API_KEY}`
   );
   const data = await apiRes.json();
-  await redis.set(cacheKey, data, { ex: 600 });
+  await redis.set(cacheKey, data, { ex: 3600 });
 
   return new NextResponse(JSON.stringify(data), {
     headers: {
