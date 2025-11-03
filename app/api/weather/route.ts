@@ -24,14 +24,13 @@ export async function GET(req: NextRequest) {
   }
 
   const { searchParams } = new URL(req.url);
-  const lat = searchParams.get("lat");
-  const lon = searchParams.get("lon");
+  const loc = searchParams.get("loc");
 
-  if (!lat || !lon) {
-    return NextResponse.json({ error: "Missing lat/lon" }, { status: 400 });
+  if (!loc) {
+    return NextResponse.json({ error: "Location input" }, { status: 400 });
   }
 
-  const cacheKey = `weather:${lat}:${lon}`;
+  const cacheKey = `weather:${loc}`;
   const cached = await redis.get(cacheKey);
   if (cached) {
     return new NextResponse(JSON.stringify(cached), {
@@ -43,7 +42,7 @@ export async function GET(req: NextRequest) {
   }
 
   const apiRes = await fetch(
-    `https://api.tomorrow.io/v4/weather/realtime?location=${lat},${lon}&apikey=${process.env.TOMORROW_API_KEY}`
+    `https://api.tomorrow.io/v4/weather/realtime?location=${loc}&apikey=${process.env.TOMORROW_API_KEY}`
   );
   const data = await apiRes.json();
   await redis.set(cacheKey, data, { ex: 600 });
