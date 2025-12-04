@@ -9,6 +9,10 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type,Authorization",
 };
 
+function jsonWithCors(body: unknown, status = 200) {
+  return NextResponse.json(body, { status, headers: CORS_HEADERS });
+}
+
 export async function OPTIONS(_: Request) {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
@@ -16,10 +20,7 @@ export async function OPTIONS(_: Request) {
 export async function GET(req: Request) {
   const key = process.env.GOOGLE_MAPS_API_KEY;
   if (!key) {
-    return NextResponse.json(
-      { error: "Missing GOOGLE_MAPS_API_KEY" },
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return jsonWithCors({ error: "Missing GOOGLE_MAPS_API_KEY" }, 500);
   }
 
   const urlObj = new URL(req.url);
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
       )}&key=${encodeURIComponent(key)}&types=geocode`;
       const r = await fetch(url);
       const body = await r.json();
-      return NextResponse.json(body, { headers: CORS_HEADERS });
+      return jsonWithCors(body);
     }
 
     if (op === "geocode") {
@@ -43,16 +44,16 @@ export async function GET(req: Request) {
       )}&key=${encodeURIComponent(key)}`;
       const r = await fetch(url);
       const body = await r.json();
-      return NextResponse.json(body);
+      return jsonWithCors(body); // <-- was missing CORS headers
     }
 
     if (op === "reverse" || op === "reverse_geocode") {
       const lat = urlObj.searchParams.get("lat") || "";
       const lng = urlObj.searchParams.get("lng") || "";
       if (!lat || !lng) {
-        return NextResponse.json(
+        return jsonWithCors(
           { error: "Missing lat or lng for reverse geocode" },
-          { status: 400, headers: CORS_HEADERS }
+          400
         );
       }
 
@@ -63,17 +64,11 @@ export async function GET(req: Request) {
 
       const r = await fetch(url);
       const body = await r.json();
-      return NextResponse.json(body, { headers: CORS_HEADERS });
+      return jsonWithCors(body);
     }
 
-    return NextResponse.json(
-      { error: "invalid op" },
-      { status: 400, headers: CORS_HEADERS }
-    );
+    return jsonWithCors({ error: "invalid op" }, 400);
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message || String(err) },
-      { status: 500, headers: CORS_HEADERS }
-    );
+    return jsonWithCors({ error: err?.message || String(err) }, 500);
   }
 }
