@@ -1,35 +1,43 @@
-import { VercelRequest, VercelResponse } from "@vercel/node";
+import { NextResponse } from "next/server";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function GET(req: Request) {
   const key = process.env.GOOGLE_MAPS_API_KEY;
-  if (!key)
-    return res.status(500).json({ error: "Missing GOOGLE_MAPS_API_KEY" });
+  if (!key) {
+    return NextResponse.json(
+      { error: "Missing GOOGLE_MAPS_API_KEY" },
+      { status: 500 }
+    );
+  }
 
-  const op = (req.query.op as string) || "";
+  const urlObj = new URL(req.url);
+  const op = urlObj.searchParams.get("op") || "";
 
   try {
     if (op === "autocomplete") {
-      const input = String(req.query.input || "");
+      const input = urlObj.searchParams.get("input") || "";
       const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
         input
-      )}&key=${key}&types=geocode`;
+      )}&key=${encodeURIComponent(key)}&types=geocode`;
       const r = await fetch(url);
       const body = await r.json();
-      return res.status(200).json(body);
+      return NextResponse.json(body);
     }
 
     if (op === "geocode") {
-      const placeId = String(req.query.place_id || "");
+      const placeId = urlObj.searchParams.get("place_id") || "";
       const url = `https://maps.googleapis.com/maps/api/geocode/json?place_id=${encodeURIComponent(
         placeId
-      )}&key=${key}`;
+      )}&key=${encodeURIComponent(key)}`;
       const r = await fetch(url);
       const body = await r.json();
-      return res.status(200).json(body);
+      return NextResponse.json(body);
     }
 
-    return res.status(400).json({ error: "invalid op" });
+    return NextResponse.json({ error: "invalid op" }, { status: 400 });
   } catch (err: any) {
-    return res.status(500).json({ error: err?.message || String(err) });
+    return NextResponse.json(
+      { error: err?.message || String(err) },
+      { status: 500 }
+    );
   }
 }
