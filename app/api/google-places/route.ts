@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-const ALLOWED_ORIGIN = "https://cs571-f25.github.io"; // GitHub Pages domain
+const ALLOWED_ORIGIN =
+  process.env.ALLOWED_ORIGIN || "https://cs571-f25.github.io"; // GitHub Pages domain
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN || "*",
