@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const WEATHER_BASE =
       process.env.WEATHER_API_BASE_URL ||
       "https://api.tomorrow.io/v4/timelines";
-    const key = process.env.WEATHER_API_KEY;
+    const key = process.env.TOMORROW_API_KEY;
     if (!key) {
       return NextResponse.json(
         { error: "Missing WEATHER_API_KEY" },
