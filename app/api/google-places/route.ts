@@ -35,11 +35,21 @@ export async function GET(req: Request) {
       return NextResponse.json(body, { headers: CORS_HEADERS });
     }
 
-    if (op === "geocode") {
-      const placeId = urlObj.searchParams.get("place_id") || "";
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?place_id=${encodeURIComponent(
-        placeId
+    if (op === "reverse" || op === "reverse_geocode") {
+      const lat = urlObj.searchParams.get("lat") || "";
+      const lng = urlObj.searchParams.get("lng") || "";
+      if (!lat || !lng) {
+        return NextResponse.json(
+          { error: "Missing lat or lng for reverse geocode" },
+          { status: 400, headers: CORS_HEADERS }
+        );
+      }
+
+      const latlng = `${lat},${lng}`;
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${encodeURIComponent(
+        latlng
       )}&key=${encodeURIComponent(key)}`;
+
       const r = await fetch(url);
       const body = await r.json();
       return NextResponse.json(body, { headers: CORS_HEADERS });
