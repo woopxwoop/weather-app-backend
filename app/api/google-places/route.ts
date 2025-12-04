@@ -4,7 +4,7 @@ const ALLOWED_ORIGIN =
   process.env.ALLOWED_ORIGIN || "https://cs571-f25.github.io"; // GitHub Pages domain
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN || "*",
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Methods": "GET,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type,Authorization",
 };
