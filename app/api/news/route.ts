@@ -24,11 +24,7 @@ export async function OPTIONS(_: Request) {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const loc = searchParams.get("loc");
-
-  if (!loc) {
-    return NextResponse.json({ error: "Location input" }, { status: 400 });
-  }
+  const loc = searchParams.get("loc") || "";
 
   const query = `weather ${loc}`;
 
