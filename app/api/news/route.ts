@@ -4,7 +4,6 @@ import { XMLParser } from "fast-xml-parser";
 type newsItem = {
   title: string;
   link: string;
-  description: string;
   pubDate: string;
   source?: string;
 };
@@ -42,7 +41,6 @@ export async function GET(req: NextRequest) {
   const articles = data.rss.channel.item.map((item: newsItem) => ({
     title: item.title,
     link: item.link,
-    description: item.description,
     pubDate: item.pubDate,
     source: item["source"], // some feeds have <source>
   }));
