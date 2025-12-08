@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
   const cached = await redis.get(cacheKey);
 
   if (cached) {
-    return new NextResponse(JSON.stringify(cached), {
+    return NextResponse.json(cached, {
       headers: {
         "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 
   await redis.set(cacheKey, data, { ex: 3600 });
 
-  return new NextResponse(JSON.stringify(data), {
+  return NextResponse.json(data, {
     headers: CORS_HEADERS,
   });
 }
