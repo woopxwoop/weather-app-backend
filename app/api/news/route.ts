@@ -47,5 +47,5 @@ export async function GET(req: NextRequest) {
     source: item["source"], // some feeds have <source>
   }));
 
-  return Response.json({ articles });
+  return NextResponse.json(articles, { headers: CORS_HEADERS });
 }
