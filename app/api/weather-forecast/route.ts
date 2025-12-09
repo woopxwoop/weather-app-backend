@@ -60,7 +60,7 @@ export async function GET(req: Request) {
     const timesteps = qp.get("timesteps") || "1h";
     let startTime = qp.get("startTime");
     let endTime = qp.get("endTime");
-    const units = qp.get("units") || "imperial";
+    const units = qp.get("units") || "metric";
     const timezone = qp.get("timezone") || "UTC";
 
     // Default to now UTC -> +2 days if start/end not provided
@@ -87,7 +87,7 @@ export async function GET(req: Request) {
 
     const body = await resp.json();
 
-    await redis.set(cacheKey, body, { ex: 86400 });
+    await redis.set(cacheKey, body, { ex: 86400 - 3600 });
 
     return NextResponse.json(body, {
       status: resp.ok ? 200 : resp.status,
